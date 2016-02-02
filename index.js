@@ -1,29 +1,68 @@
 var express = require('express'),
     MongoClient = require('mongodb').MongoClient,
+    ObjectID = require('mongodb').ObjectID;
     url = 'mongodb://localhost:27017/url-shortener',
     app = express(),
-    port = Number(process.argv[2]) || 3000;
+    port = Number(process.argv[2]) || 3000,
+    dbConnection = null;
+
+function findURL(db, searchObj, callback) {
+    if(!callback)
+        return console.error('No callback specified.');
+
+    db.collection('urls').find(searchObj).limit(1).toArray(function(err, items) {
+        if(err)
+            return callback(err, items);
+
+        if(items.length === 1)
+            callback(null, items[0]);
+        else
+            callback(null, null);
+    });
+}
 
 app.get('/shorten/:url', function(req, res) {
-    // req.params.url
-    res.end('Shortened');
-    /* Connect to the database, check if it's already been shortened
-        1. If yes - return that data
-        2. If no - add it to the collection and return
-     */
+    findURL(dbConnection, {url: req.params.url}, function(err, result) {
+        if(err)
+            return res.send('An error occured');
+
+        if(result)
+            res.send(JSON.stringify(result));
+        else {
+            var toInsert = {url: req.params.url};
+
+            dbConnection.collection('urls').insertOne(toInsert).then(function(result) {
+                res.send(JSON.stringify(result.ops[0]));
+            }, function(error) {
+                console.error('Error while adding the url', error);
+                res.send('Cannot shorten the url');
+            });
+
+        }
+    })
 });
 
 app.get('/url/:id', function(req, res) {
-    // req.params.id
-    /*
-        Connect to the database, check if such id was already shortened
-        then respond with proper data
-     */
+    findURL(dbConnection, {_id: new ObjectID(req.params.id)}, function(err, result){
+        if(err)
+            return res.send('An error occured');
+
+        if(result)
+            res.send(JSON.stringify(result));
+        else
+            res.send('This id does not exist in the database');
+    });
 });
 
-// If none of the above match then server static files from the public directory
 app.use('/', express.static(__dirname + '/public'));
 
-app.listen(port, function() {
-    console.log('Server running on port ' + port);
+MongoClient.connect(url, function(err, db) {
+    if(err)
+        return console.error('Cannot connec to the database.', url);
+
+    dbConnection = db;
+
+    app.listen(port, function() {
+        console.log('Server running on port ' + port);
+    });
 });
