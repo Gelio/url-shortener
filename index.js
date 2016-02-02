@@ -22,6 +22,9 @@ function findURL(db, searchObj, callback) {
 }
 
 app.get('/shorten/:url', function(req, res) {
+    if(req.params.url.length > 300)
+        return res.end(JSON.stringify({error: 'this url is too long'}));
+
     findURL(dbConnection, {url: req.params.url}, function(err, result) {
         if(err)
             return res.send('An error occured');
@@ -35,7 +38,7 @@ app.get('/shorten/:url', function(req, res) {
                 res.send(JSON.stringify(result.ops[0]));
             }, function(error) {
                 console.error('Error while adding the url', error);
-                res.send('Cannot shorten the url');
+                res.send(JSON.stringify({error: 'cannot shorten the url'}));
             });
 
         }
@@ -50,7 +53,7 @@ app.get('/url/:id', function(req, res) {
         if(result)
             res.send(JSON.stringify(result));
         else
-            res.send('This id does not exist in the database');
+            res.send(JSON.stringify({error: 'this id cannot be found in our database'}));
     });
 });
 

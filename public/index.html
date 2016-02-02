@@ -4,8 +4,40 @@
     <title>Url shortener</title>
 </head>
 <body>
-This is the url shortener.
+<div>
+    <h1>URL-shortener</h1>
+    <p>This is a URL shortener developed in Node.js and using MongoDB as a database.</p>
+    <p>It provides a basic service of storing an URL (or any data for that matter - the limit is that it should not contain over 300 characters) and saves it in our database, giving you only a 24 character hex string that serves as an ID. You can later get the original URL back by providing another API call with that ID.</p>
+</div>
 
-Created by <a href="http://voreny.bitbucket.org">Grzegorz Rozdzialik</a>
+<div>
+    <h2>How it works?</h2>
+    <p>There are 2 API endpoints currently.</p>
+    <ul>
+        <li><a href="/shorten/hello-world">/shorten/&lt;url&gt;</a> - shortens the URL and returns a JSON response - either an error if something went wrong, or a regular response object (specified below). If this URL was already shortened before then it returns the previous ID of the shortened URL</li>
+        <li><a href="/url/">/url/&lt;id&gt;</a> - fetches the original URL back. Returns a JSON response, either an error if something went wrong or a response object (specified below).</li>
+    </ul>
+</div>
+
+<div>
+    <h2>Response objects</h2>
+    <p>There are 2 types of reponse objects returned from the API.</p>
+    <ul>
+        <li>
+            <h4>Regular response</h4>
+            <p>Contains an <b>_id</b> field that holds a 24 character long hex string that identifies that url, and an <b>url</b> field that holds the original URL that was to be shortened</p>
+            <pre>{"_id":"56b12102bcdcb258201c5235","url":"hello-world"}</pre>
+        </li>
+        <li>
+            <h4>Error response</h4>
+            <p>Contains only one field - <b>error</b>, which contents specify what happened exactly.</p>
+            <pre>{"error":"this url is too long"}</pre>
+        </li>
+    </ul>
+</div>
+
+<footer>
+    Created by <a href="http://voreny.bitbucket.org">Grzegorz Rozdzialik</a>
+</footer>
 </body>
 </html>
