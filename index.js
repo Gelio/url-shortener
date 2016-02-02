@@ -23,22 +23,22 @@ function findURL(db, searchObj, callback) {
 
 app.get('/shorten/:url', function(req, res) {
     if(req.params.url.length > 300)
-        return res.end(JSON.stringify({error: 'this url is too long'}));
+        return res.json({error: 'this url is too long'});
 
     findURL(dbConnection, {url: req.params.url}, function(err, result) {
         if(err)
-            return res.send('An error occured');
+            return res.json({error: 'cannot fetch urls from the database'});
 
         if(result)
-            res.send(JSON.stringify(result));
+            res.json(result);
         else {
             var toInsert = {url: req.params.url};
 
             dbConnection.collection('urls').insertOne(toInsert).then(function(result) {
-                res.send(JSON.stringify(result.ops[0]));
+                res.json(result.ops[0]);
             }, function(error) {
                 console.error('Error while adding the url', error);
-                res.send(JSON.stringify({error: 'cannot shorten the url'}));
+                res.json({error: 'cannot shorten the url'});
             });
 
         }
@@ -48,12 +48,12 @@ app.get('/shorten/:url', function(req, res) {
 app.get('/url/:id', function(req, res) {
     findURL(dbConnection, {_id: new ObjectID(req.params.id)}, function(err, result){
         if(err)
-            return res.send('An error occured');
+            return res.json({error: 'cannot fetch urls from the database'});
 
         if(result)
-            res.send(JSON.stringify(result));
+            res.json(result);
         else
-            res.send(JSON.stringify({error: 'this id cannot be found in our database'}));
+            res.json({error: 'this id cannot be found in our database'});
     });
 });
 
