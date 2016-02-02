@@ -1,0 +1,24 @@
+{
+  "name": "url-shortener",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gelio/url-shortener.git"
+  },
+  "author": "Grzegorz Rozdzialik <voreny.gelio@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Gelio/url-shortener/issues"
+  },
+  "homepage": "https://github.com/Gelio/url-shortener#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "kerberos": "0.0.18",
+    "mongodb": "^2.1.4"
+  }
+}
