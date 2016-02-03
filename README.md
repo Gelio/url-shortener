@@ -7,7 +7,7 @@ This is a basic url shortener developed in Node using MongoDB as a storage.
 Current API options:
 
 * */shorten/<url>* - shortens URL and returns JSON that contains the id and the base url. If it's already been shortened in the past then it returns the previous record from the database. ID is a 24 character hex string.
-* */url/<id>* - looks through the database for a record with a matching ID. Returns either the same object as with */shorten/* or an error object with information, that no such ID could be found.
+* */url/<id>* - redirects to a URL associated with that ID. If no URL was found then displays an error JSON object.
 
 When no API options are matched then the server sends static files from the *public* directory. *index.html* contains basic information about the service.
 
